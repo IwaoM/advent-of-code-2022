@@ -1,7 +1,9 @@
+const fs = require("node:fs");
+const path = require("node:path");
 const readline = require("readline");
 const dailyScripts = [];
 
-for (let i = 1; i < 25; i++) {
+for (let i = 1; i <= 25; i++) {
   try {
     dailyScripts.push(require(`./day${i}`));
   } catch (err) {
@@ -9,25 +11,42 @@ for (let i = 1; i < 25; i++) {
   }
 }
 
+const inputFolder = path.join(__dirname, "inputs");
+
 function runDailyScript () {
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
   });
 
+  console.log("\n===================\nADVENT OF CODE 2022\n===================\n");
   rl.question("Which day? ", function (dayNumber) {
     dayNumber = Number(dayNumber);
-    if (dayNumber && dayNumber >= 1 && dayNumber < 25) {
-      console.log(`Running the script for day ${dayNumber}`);
+    if (dayNumber && dayNumber >= 1 && dayNumber <= 25) {
+
       if (dailyScripts.length >= dayNumber) {
-        dailyScripts[dayNumber - 1]();
+
+        const inputDir = path.join(inputFolder, dayNumber + ".txt");
+
+        try {
+          const inputData = fs.readFileSync(inputDir, { encoding:"utf8", flag:"r" });
+          console.log(`\nInput data '${dayNumber}.txt' retrieved`);
+          console.log(`Running the script for day ${dayNumber}\n\n===================\n`);
+
+          dailyScripts[dayNumber - 1](inputData);
+        } catch {
+          console.error("\nError when reading input file");
+        }
+
       } else {
-        console.log("This script does not exist yet");
+        console.error("\nThis script does not exist yet");
       }
+
     } else {
-      console.log("Invalid input");
+      console.error("\nInvalid input");
     }
     rl.close();
+    console.log("\n===================");
   });
 }
 
