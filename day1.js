@@ -1,5 +1,4 @@
 module.exports = function day1 (inputData) {
-
   const inputArray = inputData.split("\n");
 
   // Part 1
