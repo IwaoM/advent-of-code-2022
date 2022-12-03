@@ -33,7 +33,12 @@ function runDailyScript () {
           console.log(`\nInput data '${dayNumber}.txt' retrieved`);
           console.log(`Running the script for day ${dayNumber}\n\n===================\n`);
 
-          dailyScripts[dayNumber - 1](inputData);
+          try {
+            dailyScripts[dayNumber - 1](inputData);
+          } catch (err) {
+            console.error("\nError when executing the script");
+          }
+
         } catch {
           console.error("\nError when reading input file");
         }
