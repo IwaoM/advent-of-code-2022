@@ -30,5 +30,26 @@ module.exports = function day3 (inputData) {
 
   // Part 2
   let result2 = 0;
-  console.log(`Total number of calories carried by the 3 elves carrying the most calories: ${result2}`);
+  // console.log(`result2 = ${result2}\n`);
+  const groupArray = [];
+  // construct the groups of 3
+  for (let i = 0; i < inputArray.length; i++) {
+    if (i % 3 == 0) {
+      groupArray.push([]);
+    }
+    groupArray[groupArray.length - 1].push(inputArray[i]);
+  }
+  for (let i = 0; i < groupArray.length; i++) {
+    // console.log(groupArray[i]);
+    for (let j = 0; j < groupArray[i][0].length; j++) {
+      const currentLetter = groupArray[i][0][j];
+      if (groupArray[i][1].indexOf(currentLetter) >= 0 && groupArray[i][2].indexOf(currentLetter) >= 0) {
+        // console.log(`Character found : ${currentLetter} - adding ${priorities.indexOf(currentLetter)} to result2`);
+        result2 += priorities.indexOf(currentLetter);
+        // console.log(`result2 = ${result2}\n`);
+        break;
+      }
+    }
+  }
+  console.log(`Sum of the priorities of badges: ${result2}`);
 };
