@@ -23,14 +23,14 @@ module.exports = function day5 (inputData) {
   }
 
   // Step 2 - constructing the stacks
-  const stacks = [];
+  const startingStacks = [];
   for (let i = 0; i < stackCount; i++) {
-    stacks.push([]);
+    startingStacks.push([]);
   }
   for (let i = drawingRows.length - 1; i >= 0; i--) { // start from the bottom (shift & unshift are more expensive operations than push & pop)
     for (let j = 0; j < stackCount; j++) {
       if (drawingRows[i][j * 4 + 1] != " ") {
-        stacks[j].push(drawingRows[i][j * 4 + 1]);
+        startingStacks[j].push(drawingRows[i][j * 4 + 1]);
       }
     }
   }
@@ -48,18 +48,32 @@ module.exports = function day5 (inputData) {
 
   //* Part 1
   let result1 = "";
+  const stacks1 = JSON.parse(JSON.stringify(startingStacks)); // deep copy
   for (let i = 0; i < instructionArray.length; i++) {
     for (let j = 0; j < instructionArray[i][0]; j++) {
-      const crate = stacks[instructionArray[i][1] - 1].pop();
-      stacks[instructionArray[i][2] - 1].push(crate);
+      const crate = stacks1[instructionArray[i][1] - 1].pop();
+      stacks1[instructionArray[i][2] - 1].push(crate);
     }
   }
-  console.log(stacks);
   for (let i = 0; i < stackCount; i++) {
-    result1 += stacks[i][stacks[i].length - 1];
+    result1 += stacks1[i][stacks1[i].length - 1];
   }
-  console.log(`Letters of the highest crate in each stack: ${result1}`);
+  console.log(`Letters of the highest crate in each stack with the CrateMover 9000: ${result1}`);
 
-  let result2 = 0;
-  console.log(`Number of assignment pairs that overlap: ${result2}`);
+  //* Part 2
+  let result2 = "";
+  const stacks2 = JSON.parse(JSON.stringify(startingStacks)); // deep copy
+  for (let i = 0; i < instructionArray.length; i++) {
+    const subStack = [];
+    for (let j = 0; j < instructionArray[i][0]; j++) {
+      const crate = stacks2[instructionArray[i][1] - 1].pop();
+      subStack.push(crate);
+    }
+    subStack.reverse();
+    stacks2[instructionArray[i][2] - 1].push(...subStack);
+  }
+  for (let i = 0; i < stackCount; i++) {
+    result2 += stacks2[i][stacks2[i].length - 1];
+  }
+  console.log(`Letters of the highest crate in each stack with the CrateMover 9001: ${result2}`);
 };
