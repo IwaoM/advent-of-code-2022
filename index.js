@@ -37,6 +37,7 @@ function runDailyScript () {
             dailyScripts[dayNumber - 1](inputData);
           } catch (err) {
             console.error("\nError when executing the script");
+            console.error(err.stack);
           }
 
         } catch {
