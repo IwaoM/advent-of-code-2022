@@ -1,5 +1,6 @@
 module.exports = function day1 (inputData) {
   const inputArray = inputData.split("\n");
+  inputArray.pop(); // remove empty line at EOF
 
   // Part 1
   const resultArray = [0];

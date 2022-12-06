@@ -17,5 +17,5 @@ module.exports = function day6 (inputData) {
 
   //* Part 2
   let result2 = getMarkerIndex(14, inputData);
-  console.log(`result2: ${result2}`);
+  console.log(`The first start-of-message marker is after character : ${result2}`);
 };

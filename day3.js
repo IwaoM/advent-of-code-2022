@@ -1,5 +1,6 @@
 module.exports = function day3 (inputData) {
   const inputArray = inputData.split("\n");
+  inputArray.pop(); // remove empty line at EOF
   const priorities = "-abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
   // Part 1
