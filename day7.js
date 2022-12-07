@@ -40,7 +40,8 @@ class fsNode {
     return finalSize;
   }
 
-  computeTotalSizeSumUnderX (maxSize = 0) {
+  // part 1 function
+  computeTotalSizeSumUnderX (maxSize) {
     let finalSize = 0;
     if (this.size <= maxSize) {
       finalSize += this.size;
@@ -51,6 +52,20 @@ class fsNode {
       }
     }
     return finalSize;
+  }
+
+  // part 2 function
+  getSmallestBiggerFolderSize (minSize) {
+    let folderSize = this.size;
+    for (let i = 0; i < this.childNodes.length; i++) {
+      if (this.childNodes[i].childNodes.length) {
+        const childFolderSize = this.childNodes[i].getSmallestBiggerFolderSize(minSize);
+        if (childFolderSize >= minSize && childFolderSize < folderSize) {
+          folderSize = childFolderSize;
+        }
+      }
+    }
+    return folderSize;
   }
 
   displayTree (depth = 0) {
@@ -118,14 +133,15 @@ module.exports = function day7 (inputData) {
     // console.log(`current: ${currentNode.name} - size: ${currentNode.size} - parent: ${currentNode.parentNode?.name} - children: ${currentNode.childNodeNamesToStr()}`);
   }
   rootNode.computeNodeSize();
-  rootNode.displayTree();
+  // rootNode.displayTree(); // a nice tree view
 
   //* Part 1
   let result1 = rootNode.computeTotalSizeSumUnderX(100000);
   console.log(`Sum of the total sizes of directories with a total size of at most 100000: ${result1}`);
 
   //* Part 2
-  let result2 = 0;
-  console.log(`result2: ${result2}`);
+  const minSpaceToFree = 30000000 - (70000000 - rootNode.size);
+  let result2 = rootNode.getSmallestBiggerFolderSize(minSpaceToFree);
+  console.log(`Size of the smallest folder that, if deleted, would free up enough space on the filesystem to run the update: ${result2}`);
 };
 
