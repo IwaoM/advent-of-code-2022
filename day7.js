@@ -1,5 +1,5 @@
 // Class for file system tree elements
-class fsNode {
+class FsNode {
   constructor (name, parent = null, size = 0) {
     this.name = name;
     this.size = size;
@@ -93,7 +93,7 @@ module.exports = function day7 (inputData) {
   inputArray.pop(); // remove empty line at EOF
 
   //* Parsing & tree construction
-  const rootNode = new fsNode("/");
+  const rootNode = new FsNode("/");
   let currentNode;
   for (let i = 0; i < inputArray.length; i++) {
     // console.log(`\n[${i + 1}] ${inputArray[i]}`);
@@ -117,7 +117,7 @@ module.exports = function day7 (inputData) {
     } else if (inputArray[i].startsWith("dir ")) { // the line contains a folder name
 
       const folderName = inputArray[i].slice(4);
-      const newNode = new fsNode(folderName, currentNode);
+      const newNode = new FsNode(folderName, currentNode);
       currentNode.appendChildNode(newNode);
       // console.log(`Creating new folder ${newNode.name} & appending it to ${currentNode.name}`);
 
@@ -125,7 +125,7 @@ module.exports = function day7 (inputData) {
 
       const fileName = inputArray[i].split(" ")[1];
       const fileSize = parseInt(inputArray[i].split(" ")[0]);
-      const newNode = new fsNode(fileName, currentNode, fileSize);
+      const newNode = new FsNode(fileName, currentNode, fileSize);
       currentNode.appendChildNode(newNode);
       // console.log(`Creating new file ${newNode.name} [${newNode.size}] & appending it to ${currentNode.name}`);
 
