@@ -24,8 +24,12 @@ class Knot {
   }
 
   followKnot (leadKnot) {
-    // leadKnot cannot be too far away (the Manhattan distance between leadKnot & this cannot exceed 3)
-    if (Math.abs(leadKnot.posX - this.posX) + Math.abs(leadKnot.posY - this.posY) === 3) {
+    // Part 1: leadKnot cannot be too far away (the Manhattan distance between leadKnot & this cannot exceed 3)
+    // Part 2: since a followed knot can now move away diagonally, max Manhattan distance becomes 4
+    if (
+      Math.abs(leadKnot.posX - this.posX) + Math.abs(leadKnot.posY - this.posY) === 3 ||
+      Math.abs(leadKnot.posX - this.posX) + Math.abs(leadKnot.posY - this.posY) === 4
+    ) {
       // leadKnot and this are not touching, and they are in different rows & columns: get closer diagonally
       this.posX > leadKnot.posX ? this.moveKnot("L") : this.moveKnot("R");
       this.posY > leadKnot.posY ? this.moveKnot("D") : this.moveKnot("U");
@@ -66,5 +70,20 @@ module.exports = function day9 (inputData) {
   }
   const result1 = tailKnot.recordedPositions.size;
   console.log(`Number of different positions the tail knot has had: ${result1}`);
+
+  //* Part 2
+  const rope = [];
+  for (let i = 0; i < 10; i++) {
+    rope.push(new Knot());
+  }
+  for (let i = 0; i < instructionArray.length; i++) {
+    rope[0].moveKnot(instructionArray[i]);
+    for (let j = 1; j < 10; j++) {
+      rope[j].followKnot(rope[j - 1]);
+    }
+    rope[9].recordPosition();
+  }
+  const result2 = rope[9].recordedPositions.size;
+  console.log(`Number of different positions the last knot of the long rope has had: ${result2}`);
 
 };
