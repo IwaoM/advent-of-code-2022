@@ -1,6 +1,10 @@
 class Position {
   static allPositions = [];
 
+  static clearAllPositions () {
+    Position.allPositions = [];
+  }
+
   constructor (xCoord, yCoord, height) {
     this.x = xCoord;
     this.y = yCoord;
@@ -50,7 +54,7 @@ class Position {
     // step cost is 1 if previous position is 1 level below (optimal case), 2 if same level, 3 if 1 level above, etc.
     // if previous position is more than 1 level below, movement is impossible so cost is Infinity
     const newGScore = previousPos.gScore + this.stepCost(previousPos);
-    if (!this.gScore || newGScore < this.gScore) {
+    if (newGScore != Infinity && (!this.gScore || newGScore != Infinity && newGScore < this.gScore)) {
       this.gScore = newGScore;
       return true; // if updated
     }
@@ -75,17 +79,7 @@ class Position {
   }
 }
 
-module.exports = function day10 (inputData) {
-  const inputArray = inputData.split("\n");
-  inputArray.pop(); // remove empty line at EOF
-
-  //* Part 1
-  for (let i = 0; i < inputArray.length; i++) {
-    for (let j = 0; j < inputArray[i].length; j++) {
-      new Position(j, i, inputArray[i][j]);
-    }
-  }
-
+function findPath () { // A* algorithm
   const startPos = Position.allPositions.find(elem => elem.isStart);
   const endPos = Position.allPositions.find(elem => elem.isEnd);
   startPos.updateFScoreToEnd(endPos);
@@ -93,7 +87,6 @@ module.exports = function day10 (inputData) {
   const openSet = new Set();
   openSet.add(startPos);
   const previousPositions = new Map();
-  let fullPath;
 
   while (openSet.size) {
     // store fScores & get the lowest
@@ -104,8 +97,7 @@ module.exports = function day10 (inputData) {
       }
     });
     if (currentPos.isEnd) {
-      fullPath = currentPos.getPathToCurrent(previousPositions);
-      break;
+      return currentPos.getPathToCurrent(previousPositions);
     } else {
       openSet.delete(currentPos);
       for (let neighbor of currentPos.getNeighbors()) {
@@ -117,7 +109,82 @@ module.exports = function day10 (inputData) {
       }
     }
   }
+  return []; // if no path is found
+}
 
+module.exports = function day12 (inputData) {
+  const inputArray = inputData.split("\n");
+  inputArray.pop(); // remove empty line at EOF
+
+  //* Part 1
+  console.log(`== PART 1 ==`);
+  // create all positions
+  for (let i = 0; i < inputArray.length; i++) {
+    for (let j = 0; j < inputArray[i].length; j++) {
+      new Position(j, i, inputArray[i][j]);
+    }
+  }
+
+  const fullPath = findPath();
   const result1 = fullPath.length - 1;
-  console.log(`The minimum number of steps needed to go from S to E is: ${result1}`);
+  console.log(`The minimum number of steps needed to go from S to E is: ${result1}\n`);
+
+  // visual representations
+  for (let i = 0; i < inputArray.length; i++) {
+    let row = "";
+    for (let j = 0; j < inputArray[i].length; j++) {
+      if (fullPath.find(pos => pos.x === j && pos.y === i)) {
+        row += inputArray[i][j];
+      } else {
+        row += ".";
+      }
+    }
+    console.log(row);
+  }
+  console.log("\n");
+
+  Position.clearAllPositions();
+
+  //* Part 2
+  console.log(`== PART 2 ==`);
+  const startPositions = [];
+  for (let i = 0; i < inputArray.length; i++) {
+    for (let j = 0; j < inputArray[i].length; j++) {
+      if (inputArray[i][j] === "a") {
+        startPositions.push([i, j]);
+      }
+    }
+  }
+
+  let minPath, minPathK;
+
+  for (let k = 0; k < startPositions.length; k++) {
+    if ((k + 1) % 100 == 0) { // show progression
+      console.log(k + 1 + " routes tested");
+    }
+
+    for (let i = 0; i < inputArray.length; i++) {
+      for (let j = 0; j < inputArray[i].length; j++) {
+        if (inputArray[i][j] === "S") {
+          new Position(j, i, "a");
+        } else if (i === startPositions[k][0] && j === startPositions[k][1]) {
+          new Position(j, i, "S");
+        } else {
+          new Position(j, i, inputArray[i][j]);
+        }
+      }
+    }
+
+    const currentPath = findPath();
+    if (currentPath.length && (!minPath || currentPath.length < minPath.length)) {
+      minPath = currentPath;
+      minPathK = k;
+    }
+    Position.clearAllPositions();
+  }
+
+  const result2 = minPath.length - 1;
+  console.log(`\nMinimum path length is ${result2}, and it is achieved when S is at position ${startPositions[minPathK][1]}, ${startPositions[minPathK][0]}`);
+
+
 };
