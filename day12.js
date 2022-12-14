@@ -148,9 +148,16 @@ module.exports = function day12 (inputData) {
   //* Part 2
   console.log(`== PART 2 ==`);
   const startPositions = [];
+  // record coordinates for each position with an elevation of "a" & directly next to a "b"
   for (let i = 0; i < inputArray.length; i++) {
     for (let j = 0; j < inputArray[i].length; j++) {
-      if (inputArray[i][j] === "a") {
+      if (
+        inputArray[i][j] === "a" &&
+        (i + 1 < inputArray.length && inputArray[i + 1][j] === "b" ||
+        i - 1 >= 0 && inputArray[i - 1][j] === "b" ||
+        j + 1 < inputArray[i].length && inputArray[i][j + 1] === "b" ||
+        j - 1 >= 0 && inputArray[i][j - 1] === "b")
+      ) {
         startPositions.push([i, j]);
       }
     }
@@ -159,10 +166,6 @@ module.exports = function day12 (inputData) {
   let minPath, minPathK;
 
   for (let k = 0; k < startPositions.length; k++) {
-    if ((k + 1) % 100 == 0) { // show progression
-      console.log(k + 1 + " routes tested");
-    }
-
     for (let i = 0; i < inputArray.length; i++) {
       for (let j = 0; j < inputArray[i].length; j++) {
         if (inputArray[i][j] === "S") {
@@ -181,10 +184,12 @@ module.exports = function day12 (inputData) {
       minPathK = k;
     }
     Position.clearAllPositions();
+
+    if ((k + 1) % 10 == 0 || k + 1 == startPositions.length) { // show progression
+      console.log(`${k + 1}/${startPositions.length} routes tested`);
+    }
   }
 
   const result2 = minPath.length - 1;
   console.log(`\nMinimum path length is ${result2}, and it is achieved when S is at position ${startPositions[minPathK][1]}, ${startPositions[minPathK][0]}`);
-
-
 };
