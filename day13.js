@@ -38,12 +38,11 @@ function comparePackets (left, right, logging = false) {
 }
 
 module.exports = function day13 (inputData) {
-  const inputArray = inputData.split("\n\n");
-
   //* Part 1
+  const inputArray1 = inputData.split("\n\n");
   console.log(`== PART 1 ==`);
   let result1 = 0;
-  const packetPairs = inputArray.map(elem => [elem.split("\n")[0], elem.split("\n")[1]]);
+  const packetPairs = inputArray1.map(elem => [elem.split("\n")[0], elem.split("\n")[1]]);
   for (let i = 0; i < packetPairs.length; i++) {
     if (comparePackets(JSON.parse(packetPairs[i][0]), JSON.parse(packetPairs[i][1])) == 1) {
       result1 += i + 1;
@@ -51,4 +50,22 @@ module.exports = function day13 (inputData) {
     // console.log("");
   }
   console.log(`The sum of indices of the pairs in the right order is: ${result1}\n`);
+
+  //* Part 2
+  console.log(`== PART 2 ==`);
+  const inputArray2 = inputData.split("\n");
+
+  //remove empty rows
+  for (let i = inputArray2.length - 1; i >= 0; i--) {
+    if (i % 3 == 2) {
+      inputArray2.splice(i, 1);
+    }
+  }
+
+  inputArray2.push("[[2]]", "[[6]]");
+  // good thing I thought of making comparePackets() a compare function usable by array.sort()
+  inputArray2.sort((a, b) => comparePackets(JSON.parse(b), JSON.parse(a)));
+  // console.log(inputArray2);
+  const result2 = (inputArray2.indexOf("[[2]]") + 1) * (inputArray2.indexOf("[[6]]") + 1);
+  console.log(`The decoder key for the distress signal is: ${result2}`);
 };
