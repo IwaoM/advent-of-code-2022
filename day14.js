@@ -9,6 +9,7 @@ class SandUnit {
     this.x = 500;
     this.y = 0;
     this.canFall = true;
+    SandUnit.cave[0][500] = "o";
   }
 
   fall () {
@@ -37,6 +38,8 @@ class SandUnit {
 
 module.exports = function day14 (inputData) {
   //* Parsing
+  console.log(`== PARSING ==`);
+  let date1 = new Date();
   const inputArray = inputData.split("\n");
   inputArray.pop(); // remove empty line at EOF
 
@@ -59,7 +62,8 @@ module.exports = function day14 (inputData) {
       }
     }
   }
-  yMax++;
+  // yMax++; // part 1
+  yMax += 3; // part 2 : adding 2 rows
   const xMax = 500 + yMax;
 
   // 3. draw the cave
@@ -103,10 +107,12 @@ module.exports = function day14 (inputData) {
   const outputFolder = path.join(__dirname, "outputs");
   const outputDir0 = path.join(outputFolder, "14-0.txt");
   fs.writeFileSync(outputDir0, cave.map(row => row.join("")).join("\n"));
+  let date2 = new Date();
+  console.log(`Execution time: ${(date2 - date1) / 1000}s\n`);
 
   //* Part 1
   console.log(`== PART 1 ==`);
-
+  date1 = new Date();
   const outputDir1 = path.join(outputFolder, "14-1.txt");
 
   SandUnit.cave = JSON.parse(JSON.stringify(cave));
@@ -117,12 +123,33 @@ module.exports = function day14 (inputData) {
     if (!fallInAbyss) {
       result1++;
     }
-    fs.writeFileSync(outputDir1, SandUnit.cave.map(row => row.join("")).join("\n"));
   }
-  console.log(`Number of sand units that come to a rest before sand starts flowing into the abyss: ${result1}\n`);
+  fs.writeFileSync(outputDir1, SandUnit.cave.map(row => row.join("")).join("\n"));
+  date2 = new Date();
+  console.log(`Number of sand units that come to a rest before sand starts flowing into the abyss: ${result1}`);
+  console.log(`Execution time: ${(date2 - date1) / 1000}s\n`);
 
   //* Part 2
   console.log(`== PART 2 ==`);
-  const result2 = 0;
-  console.log(`Result2: ${result2}`);
+  date1 = new Date();
+  const outputDir2 = path.join(outputFolder, "14-2.txt");
+  // add floor
+  for (let i = 0; i < xMax; i++) {
+    cave[yMax - 1][i] = "#";
+  }
+  SandUnit.cave = JSON.parse(JSON.stringify(cave)); // update cave
+  let restAtOrigin = false, result2 = 0;
+  while (!restAtOrigin) {
+    const sandUnit = new SandUnit();
+    sandUnit.fall();
+    result2++;
+    if (sandUnit.x === 500 && sandUnit.y === 0) {
+      restAtOrigin = true;
+    }
+  }
+  fs.writeFileSync(outputDir2, SandUnit.cave.map(row => row.join("")).join("\n"));
+
+  date2 = new Date();
+  console.log(`Number of resting sand units when the source is blocked: ${result2}`);
+  console.log(`Execution time: ${(date2 - date1) / 1000}s\n`);
 };
