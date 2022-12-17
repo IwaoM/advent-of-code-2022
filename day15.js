@@ -34,7 +34,7 @@ class Sensor {
     return covered;
   }
 
-  static getSensorCoveringCoords (x, y) { // used for part 2 since bruteforcing part 1's function would take too much time
+  static getSensorCoveringCoords (x, y) { // used for part 2
     let coveringSensor = null;
     for (let i = 0; i < Sensor.sensorList.length; i++) {
       if (Sensor.sensorList[i].coversCoords(x, y)) {
@@ -111,7 +111,7 @@ module.exports = function day15 (inputData) {
       const coveringSensor = Sensor.getSensorCoveringCoords(i, j);
       if (coveringSensor) {
         i = coveringSensor.x + coveringSensor.range - Math.abs(coveringSensor.y - j) + 1;
-        // the above operation makes i jump to the last position in the current row covered by coveringSensor
+        // the above operation makes i jump to the first position in the current row outside of coveringSensor's range
       } else {
         beaconCoords.push(i, j);
         break;
