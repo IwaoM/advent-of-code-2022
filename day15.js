@@ -3,10 +3,6 @@ class Sensor {
   static xMax;
   static xMin;
 
-  static clearSensors () {
-    this.sensorList = [];
-  }
-
   constructor (x, y, xBeacon, yBeacon) {
     this.x = x;
     this.y = y;
@@ -114,13 +110,12 @@ module.exports = function day15 (inputData) {
     while (i <= coordMax) {
       const coveringSensor = Sensor.getSensorCoveringCoords(i, j);
       if (coveringSensor) {
-        i = coveringSensor.x + coveringSensor.range - Math.abs(coveringSensor.y - j);
+        i = coveringSensor.x + coveringSensor.range - Math.abs(coveringSensor.y - j) + 1;
         // the above operation makes i jump to the last position in the current row covered by coveringSensor
       } else {
         beaconCoords.push(i, j);
         break;
       }
-      i++;
     }
     if (beaconCoords.length) {
       break;
